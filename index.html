@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#153e75">
+<title>Student Toolkit — Plan, Track, Organize</title>
+<style>
+:root{--navy:#153e75;--blue:#2563eb;--ink:#172033;--muted:#64748b;--line:#dbe3ee;--bg:#f4f7fb;--card:#fff;--green:#087f5b;--red:#b42318;--shadow:0 8px 28px #153e7510}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+header{background:linear-gradient(120deg,#153e75,#2563eb);color:white;padding:24px 18px 20px} .wrap{max-width:1080px;margin:auto}header h1{margin:0;font-size:clamp(24px,5vw,34px)}header p{margin:5px 0 0;color:#e2eaff}
+nav{display:flex;gap:8px;overflow:auto;padding:12px 16px;background:white;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:2}
+nav button{white-space:nowrap;border:1px solid var(--line);background:white;color:var(--ink);padding:9px 14px;border-radius:999px;cursor:pointer;font-weight:650}
+nav button.active{background:var(--navy);border-color:var(--navy);color:white}
+main{max-width:1080px;margin:22px auto;padding:0 16px 36px}.panel{display:none}.panel.active{display:block}.intro{margin:0 0 16px;color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow);min-width:0}.card h2,.card h3{margin:0 0 10px}.card h2{font-size:20px}.card h3{font-size:16px}
+label{display:block;font-weight:650;margin:10px 0 5px}input,select,textarea{font:inherit;width:100%;border:1px solid #cbd5e1;border-radius:9px;padding:10px 11px;background:white;color:var(--ink)}input:focus,select:focus,textarea:focus{outline:2px solid #93c5fd;border-color:var(--blue)}
+button.primary,button.secondary,button.danger{font:inherit;font-weight:700;border:0;border-radius:9px;padding:10px 14px;cursor:pointer;margin-top:12px}
+button.primary{background:var(--blue);color:white}button.secondary{background:#e8efff;color:#1d4ed8}button.danger{background:#fee4e2;color:var(--red)}button.small{padding:6px 9px;margin:0;font-size:13px}
+.row{display:flex;gap:8px;align-items:center}.row>*{flex:1}.row .fixed{flex:0 0 auto}
+.statgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}.stat{padding:14px;border-radius:12px;background:#eef4ff;border:1px solid #dbeafe}.stat strong{display:block;font-size:24px;color:var(--navy)}.stat span{font-size:12px;color:var(--muted)}
+.list{display:grid;gap:9px;margin-top:12px}.item{display:flex;align-items:flex-start;gap:10px;padding:12px;border:1px solid var(--line);border-radius:11px;background:white}.item input[type=checkbox]{width:auto;margin-top:5px}.item .details{flex:1;min-width:0}.item .details strong{display:block;overflow-wrap:anywhere}.muted{color:var(--muted);font-size:13px}.pill{display:inline-block;font-size:12px;padding:2px 8px;border-radius:99px;background:#eef2ff;color:#3730a3;margin:2px 4px 2px 0}.overdue{color:var(--red)}.good{color:var(--green)}
+.empty{color:var(--muted);padding:14px;text-align:center;border:1px dashed #cbd5e1;border-radius:10px;margin-top:12px}.legend-row{display:flex;gap:9px;align-items:center;margin:9px 0}.legend-swatch{width:12px;height:12px;border-radius:3px;flex:0 0 12px}.legend-row .legend-label{flex:1;min-width:0;overflow-wrap:anywhere}.legend-row strong{white-space:nowrap;font-size:13px}
+table{width:100%;border-collapse:collapse;margin-top:10px}th,td{text-align:left;padding:9px 7px;border-bottom:1px solid var(--line)}th{color:var(--muted);font-size:12px;text-transform:uppercase}td{overflow-wrap:anywhere}.right{text-align:right}.bar{height:10px;background:#e2e8f0;border-radius:99px;overflow:hidden;margin:7px 0 13px}.bar span{display:block;height:100%;background:var(--blue);width:0}
+footer{text-align:center;color:var(--muted);padding:18px;font-size:12px}
+@media(max-width:700px){.grid{grid-template-columns:1fr}.statgrid{grid-template-columns:repeat(3,minmax(0,1fr))}.stat{padding:10px}.stat strong{font-size:20px}.card{padding:15px}main{margin-top:15px}.row.wrapmobile{flex-wrap:wrap}.row.wrapmobile>*{flex:1 1 100%}}
+</style>
+</head>
+<body>
+<header><div class="wrap"><h1>Student Toolkit</h1><p>Plan your work. Track your spending. Stay on top of school.</p></div></header>
+<nav aria-label="Toolkit sections">
+<button class="active" data-tab="tasks">Task Dashboard</button>
+<button data-tab="budget">Budget Tracker</button>
+<button data-tab="study">Study Planner</button>
+</nav>
+<main>
+<div class="card" style="margin-bottom:16px"><h2>Save and download your data</h2><p class="muted">Your records save automatically in this browser. Download a backup to keep a copy or move your records to another device.</p><div class="row wrapmobile"><button class="primary" id="downloadBackup" type="button">Download full backup (JSON)</button><button class="secondary" id="downloadTransactions" type="button">Download transactions (CSV)</button><label class="secondary" style="display:block;text-align:center;padding:10px 14px;border-radius:9px;cursor:pointer;margin:12px 0 0">Restore backup<input id="restoreBackup" type="file" accept=".json,application/json" style="display:none"></label></div><p class="muted">Restoring a backup replaces the data currently saved in this browser.</p></div>
+<section class="panel active" id="tasks">
+<p class="intro">Organize tasks, set due dates, and automatically sort by urgency.</p>
+<div class="statgrid">
+<div class="stat"><strong id="taskTotal">0</strong><span>Total tasks</span></div>
+<div class="stat"><strong id="taskDone">0</strong><span>Completed</span></div>
+<div class="stat"><strong id="taskDue">0</strong><span>Due soon / overdue</span></div>
+</div>
+<div class="grid">
+<div class="card"><h2>Add a task</h2>
+<form id="taskForm">
+<label for="taskName">Task name</label><input id="taskName" required maxlength="100" placeholder="e.g., Finish research slides">
+<div class="row wrapmobile"><div><label for="taskDate">Due date</label><input type="date" id="taskDate" required></div><div><label for="taskPriority">Priority</label><select id="taskPriority"><option>Medium</option><option>High</option><option>Low</option></select></div></div>
+<label for="taskCategory">Category (optional)</label><input id="taskCategory" maxlength="40" placeholder="School, personal, project…">
+<button class="primary" type="submit">Add task</button>
+</form></div>
+<div class="card"><h2>Task overview</h2><p class="muted">Your tasks are sorted by incomplete status, priority, then due date.</p><div id="taskProgress"></div><button class="secondary" id="clearDone">Remove completed tasks</button></div>
+</div>
+<div class="card" style="margin-top:16px"><h2>Your tasks</h2><div id="taskList" class="list"></div></div>
+</section>
+<section class="panel" id="budget">
+<p class="intro">Record income and expenses and get automatic totals and budget summaries. Amounts are in Philippine pesos (₱).</p>
+<div class="statgrid">
+<div class="stat"><strong id="incomeTotal">₱0.00</strong><span>Income</span></div>
+<div class="stat"><strong id="expenseTotal">₱0.00</strong><span>Expenses</span></div>
+<div class="stat"><strong id="balanceTotal">₱0.00</strong><span>Remaining balance</span></div>
+</div>
+<div class="grid">
+<div class="card"><h2>Add a transaction</h2>
+<form id="moneyForm">
+<label for="moneyType">Type</label><select id="moneyType"><option value="expense">Expense</option><option value="income">Income</option></select>
+<label for="moneyName">Description</label><input id="moneyName" required maxlength="80" placeholder="e.g., School supplies">
+<div class="row wrapmobile"><div><label for="moneyAmount">Amount (₱)</label><input id="moneyAmount" type="number" min="0.01" step="0.01" required placeholder="0.00"></div><div><label for="moneyDate">Date</label><input id="moneyDate" type="date" required></div></div>
+<label for="moneyCategory">Category</label><select id="moneyCategory"><option>Food</option><option>Transport</option><option>School</option><option>Personal</option><option>Allowance</option><option>Other</option></select>
+<button class="primary" type="submit">Add transaction</button>
+</form></div>
+<div class="card"><h2>Set a spending budget</h2><label for="budgetLimit">Budget limit (₱)</label><input id="budgetLimit" type="number" min="0" step="0.01" placeholder="e.g., 1500">
+<button class="primary" id="saveBudget">Save budget</button><div id="budgetStatus" style="margin-top:16px"></div><p class="muted">This is a simple tracker for learning and planning, not financial advice.</p></div>
+</div>
+<div class="card" style="margin-top:16px"><div class="row wrapmobile" style="align-items:center"><div><h2 style="margin:0">Spending breakdown</h2><p class="muted">See which categories account for your expenses.</p></div><div><label for="chartPeriod">Period</label><select id="chartPeriod"><option value="week">This week</option><option value="month" selected>This month</option><option value="all">All time</option></select></div></div><div class="grid" style="align-items:center;margin-top:10px"><div style="min-height:230px;display:flex;align-items:center;justify-content:center"><canvas id="expenseChart" width="360" height="260" style="width:100%;max-width:360px;height:auto" aria-label="Pie chart of expenses by category"></canvas></div><div id="chartLegend"><div class="empty">Add expenses to see your chart.</div></div></div></div>
+<div class="card" style="margin-top:16px"><div class="row"><h2 style="margin:0">Transactions</h2><button class="danger small fixed" id="clearMoney">Clear all</button></div><div id="moneyList"></div></div>
+</section>
+<section class="panel" id="study">
+<p class="intro">Build a study plan, track assignment deadlines, and keep each subject organized.</p>
+<div class="statgrid">
+<div class="stat"><strong id="studyTotal">0</strong><span>Assignments</span></div>
+<div class="stat"><strong id="studyDone">0</strong><span>Completed</span></div>
+<div class="stat"><strong id="studyPending">0</strong><span>Pending</span></div>
+</div>
+<div class="grid">
+<div class="card"><h2>Add an assignment</h2>
+<form id="studyForm">
+<label for="studyName">Assignment or study task</label><input id="studyName" required maxlength="100" placeholder="e.g., Review functions">
+<label for="studySubject">Subject</label><input id="studySubject" required maxlength="50" placeholder="e.g., General Mathematics">
+<div class="row wrapmobile"><div><label for="studyDate">Due date</label><input id="studyDate" type="date" required></div><div><label for="studyTime">Estimated time (hours)</label><input id="studyTime" type="number" min="0.25" max="100" step="0.25" value="1" required></div></div>
+<button class="primary" type="submit">Add to planner</button>
+</form></div>
+<div class="card"><h2>Study progress</h2><div id="studyProgress"></div><p class="muted">Tip: split a large assignment into smaller tasks with clear due dates.</p></div>
+</div>
+<div class="card" style="margin-top:16px"><h2>Upcoming assignments</h2><div id="studyList" class="list"></div></div>
+</section>
+</main>
+<footer>Student Toolkit • Demo project • Your records stay in this browser on this device.</footer>
+<script>
+const $=id=>document.getElementById(id);
+const today=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const money=n=>new Intl.NumberFormat('en-PH',{style:'currency',currency:'PHP'}).format(n);
+function load(key,fallback){try{return JSON.parse(localStorage.getItem(key))??fallback}catch{return fallback}}
+function save(key,value){try{localStorage.setItem(key,JSON.stringify(value))}catch{alert('Could not save data in this browser. You can still use the page while it remains open.')}}
+let tasks=load('studentToolkitTasks',[]), transactions=load('studentToolkitMoney',[]), studies=load('studentToolkitStudies',[]), limit=load('studentToolkitBudget',0);
+function persistTasks(){save('studentToolkitTasks',tasks);renderTasks()}
+function renderTasks(){
+ const done=tasks.filter(t=>t.done).length, urgent=tasks.filter(t=>!t.done&&t.date<=today()).length;
+ $('taskTotal').textContent=tasks.length;$('taskDone').textContent=done;$('taskDue').textContent=urgent;
+ $('taskProgress').innerHTML=`<p><strong>${done}</strong> of ${tasks.length} tasks completed</p><div class="bar"><span style="width:${tasks.length?done/tasks.length*100:0}%"></span></div><p class="muted">${urgent?`${urgent} task(s) are due today or overdue.`:'No overdue tasks. Keep it up!'}</p>`;
+ const order={High:0,Medium:1,Low:2};const sorted=[...tasks].sort((a,b)=>Number(a.done)-Number(b.done)||order[a.priority]-order[b.priority]||a.date.localeCompare(b.date));
+ $('taskList').innerHTML=sorted.length?sorted.map(t=>`<div class="item"><input aria-label="Mark ${esc(t.name)} complete" type="checkbox" ${t.done?'checked':''} onchange="toggleTask('${t.id}')"><div class="details"><strong>${esc(t.name)}</strong><span class="pill">${esc(t.priority)} priority</span>${t.category?`<span class="pill">${esc(t.category)}</span>`:''}<div class="muted ${!t.done&&t.date<=today()?'overdue':''}">Due ${esc(t.date)}${!t.done&&t.date<today()?' · overdue':!t.done&&t.date===today()?' · due today':''}</div></div><button class="danger small" onclick="deleteTask('${t.id}')">Delete</button></div>`).join(''):'<div class="empty">No tasks yet. Add one above to get started.</div>';
+}
+window.toggleTask=id=>{tasks=tasks.map(t=>t.id===id?{...t,done:!t.done}:t);persistTasks()};window.deleteTask=id=>{tasks=tasks.filter(t=>t.id!==id);persistTasks()};
+$('taskForm').addEventListener('submit',e=>{e.preventDefault();tasks.push({id:crypto.randomUUID?.()||String(Date.now()),name:$('taskName').value.trim(),date:$('taskDate').value,priority:$('taskPriority').value,category:$('taskCategory').value.trim(),done:false});e.target.reset();$('taskDate').value=today();persistTasks()});
+$('clearDone').onclick=()=>{tasks=tasks.filter(t=>!t.done);persistTasks()};
+
+function renderMoney(){
+ const income=transactions.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0),expenses=transactions.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0),balance=income-expenses;
+ $('incomeTotal').textContent=money(income);$('expenseTotal').textContent=money(expenses);$('balanceTotal').textContent=money(balance);
+ $('budgetLimit').value=limit||'';
+ if(limit>0){const pct=expenses/limit*100;$('budgetStatus').innerHTML=`<strong>${money(expenses)} of ${money(limit)} used</strong><div class="bar"><span style="width:${Math.min(pct,100)}%;background:${pct>100?'#dc2626':'#2563eb'}"></span></div><p class="${pct>100?'overdue':'good'}">${pct>100?`Over budget by ${money(expenses-limit)}.`:`${money(limit-expenses)} remaining (${Math.max(0,100-pct).toFixed(0)}% left).`}</p>`}else $('budgetStatus').innerHTML='<p class="muted">Set a budget to see how much you have left to spend.</p>';
+ const sorted=[...transactions].sort((a,b)=>b.date.localeCompare(a.date));
+ renderExpenseChart();
+ $('moneyList').innerHTML=sorted.length?`<table><thead><tr><th>Date</th><th>Transaction</th><th>Type</th><th class="right">Amount</th><th></th></tr></thead><tbody>${sorted.map(t=>`<tr><td>${esc(t.date)}</td><td>${esc(t.name)}<div class="muted">${esc(t.category)}</div></td><td>${t.type==='income'?'Income':'Expense'}</td><td class="right ${t.type==='income'?'good':'overdue'}">${t.type==='income'?'+':'−'}${money(t.amount)}</td><td><button class="danger small" onclick="deleteMoney('${t.id}')">×</button></td></tr>`).join('')}</tbody></table>`:'<div class="empty">No transactions recorded yet.</div>';
+}
+window.deleteMoney=id=>{transactions=transactions.filter(t=>t.id!==id);save('studentToolkitMoney',transactions);renderMoney()};
+$('moneyForm').addEventListener('submit',e=>{e.preventDefault();transactions.push({id:crypto.randomUUID?.()||String(Date.now()),type:$('moneyType').value,name:$('moneyName').value.trim(),amount:Number($('moneyAmount').value),date:$('moneyDate').value,category:$('moneyCategory').value});save('studentToolkitMoney',transactions);e.target.reset();$('moneyDate').value=today();renderMoney()});
+$('saveBudget').onclick=()=>{limit=Math.max(0,Number($('budgetLimit').value)||0);save('studentToolkitBudget',limit);renderMoney()};
+$('clearMoney').onclick=()=>{if(confirm('Delete all transactions? This cannot be undone.')){transactions=[];save('studentToolkitMoney',transactions);renderMoney()}};
+
+function renderStudy(){
+ const done=studies.filter(s=>s.done).length,pending=studies.length-done;
+ $('studyTotal').textContent=studies.length;$('studyDone').textContent=done;$('studyPending').textContent=pending;
+ $('studyProgress').innerHTML=`<p><strong>${done}</strong> of ${studies.length} assignments completed</p><div class="bar"><span style="width:${studies.length?done/studies.length*100:0}%"></span></div><p class="muted">${studies.filter(s=>!s.done).reduce((a,s)=>a+s.hours,0).toFixed(1)} estimated study hours remaining.</p>`;
+ const sorted=[...studies].sort((a,b)=>Number(a.done)-Number(b.done)||a.date.localeCompare(b.date));
+ $('studyList').innerHTML=sorted.length?sorted.map(s=>`<div class="item"><input aria-label="Mark ${esc(s.name)} complete" type="checkbox" ${s.done?'checked':''} onchange="toggleStudy('${s.id}')"><div class="details"><strong>${esc(s.name)}</strong><span class="pill">${esc(s.subject)}</span><div class="muted ${!s.done&&s.date<=today()?'overdue':''}">Due ${esc(s.date)} · ${s.hours} hour(s)${!s.done&&s.date<today()?' · overdue':!s.done&&s.date===today()?' · due today':''}</div></div><button class="danger small" onclick="deleteStudy('${s.id}')">Delete</button></div>`).join(''):'<div class="empty">No assignments yet. Add one above to start planning.</div>';
+}
+window.toggleStudy=id=>{studies=studies.map(s=>s.id===id?{...s,done:!s.done}:s);save('studentToolkitStudies',studies);renderStudy()};window.deleteStudy=id=>{studies=studies.filter(s=>s.id!==id);save('studentToolkitStudies',studies);renderStudy()};
+$('studyForm').addEventListener('submit',e=>{e.preventDefault();studies.push({id:crypto.randomUUID?.()||String(Date.now()),name:$('studyName').value.trim(),subject:$('studySubject').value.trim(),date:$('studyDate').value,hours:Number($('studyTime').value),done:false});save('studentToolkitStudies',studies);e.target.reset();$('studyDate').value=today();$('studyTime').value='1';renderStudy()});
+document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active',p.id===b.dataset.tab))}));
+// Data export/import
+function downloadBlob(filename,content,mime){const blob=new Blob([content],{type:mime});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url)}
+$('downloadBackup').onclick=()=>downloadBlob('student-toolkit-backup-'+today()+'.json',JSON.stringify({format:'Student Toolkit backup',version:1,exportedAt:new Date().toISOString(),tasks,transactions,studies,budgetLimit:limit},null,2),'application/json');
+$('downloadTransactions').onclick=()=>{const cell=v=>'"'+String(v??'').replace(/"/g,'""')+'"';const rows=[['Date','Type','Description','Category','Amount'],...transactions.map(t=>[t.date,t.type,t.name,t.category,t.amount])];downloadBlob('student-toolkit-transactions-'+today()+'.csv',rows.map(r=>r.map(cell).join(',')).join('\r\n'),'text/csv;charset=utf-8')};
+$('restoreBackup').onchange=async e=>{const file=e.target.files?.[0];if(!file)return;try{const d=JSON.parse(await file.text());if(d?.format!=='Student Toolkit backup'||!Array.isArray(d.tasks)||!Array.isArray(d.transactions)||!Array.isArray(d.studies))throw Error('That file is not a valid Student Toolkit backup.');if(!confirm('Restore this backup? It will replace the data currently saved in this browser.'))return;tasks=d.tasks;transactions=d.transactions;studies=d.studies;limit=Math.max(0,Number(d.budgetLimit)||0);save('studentToolkitTasks',tasks);save('studentToolkitMoney',transactions);save('studentToolkitStudies',studies);save('studentToolkitBudget',limit);renderTasks();renderMoney();renderStudy();alert('Backup restored.')}catch(err){alert(err.message||'Could not read this backup file.')}finally{e.target.value=''}};
+// Expense pie chart with weekly, monthly, and all-time filters
+const chartColors=['#2563eb','#16a34a','#f59e0b','#db2777','#7c3aed','#0891b2','#ea580c','#64748b'];
+function renderExpenseChart(){const canvas=$('expenseChart');if(!canvas)return;const period=$('chartPeriod')?.value||'month',now=new Date();let start;if(period==='week'){start=new Date(now.getFullYear(),now.getMonth(),now.getDate());start.setDate(start.getDate()-((start.getDay()+6)%7))}else start=new Date(now.getFullYear(),now.getMonth(),1);const chosen=transactions.filter(t=>t.type==='expense'&&(period==='all'||(new Date(t.date+'T12:00:00')>=start&&new Date(t.date+'T12:00:00')<=now)));const totals={};chosen.forEach(t=>{const c=t.category||'Other';totals[c]=(totals[c]||0)+Number(t.amount||0)});const data=Object.entries(totals).sort((a,b)=>b[1]-a[1]),ctx=canvas.getContext('2d');ctx.clearRect(0,0,canvas.width,canvas.height);const total=data.reduce((a,d)=>a+d[1],0);if(!data.length||total<=0){ctx.fillStyle='#64748b';ctx.font='15px system-ui';ctx.textAlign='center';ctx.fillText('No expenses for this period',180,130);$('chartLegend').innerHTML='<div class="empty">Add expenses in this period to see the breakdown.</div>';return}let angle=-Math.PI/2;data.forEach(([label,value],i)=>{const next=angle+value/total*Math.PI*2;ctx.beginPath();ctx.moveTo(180,130);ctx.arc(180,130,96,angle,next);ctx.closePath();ctx.fillStyle=chartColors[i%chartColors.length];ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.stroke();angle=next});ctx.beginPath();ctx.arc(180,130,52,0,Math.PI*2);ctx.fillStyle='#fff';ctx.fill();ctx.fillStyle='#172033';ctx.textAlign='center';ctx.font='bold 14px system-ui';ctx.fillText(money(total),180,129);ctx.fillStyle='#64748b';ctx.font='11px system-ui';ctx.fillText('total expenses',180,147);$('chartLegend').innerHTML=data.map(([label,value],i)=>`<div class="legend-row"><span class="legend-swatch" style="background:${chartColors[i%chartColors.length]}"></span><span class="legend-label">${esc(label)}</span><strong>${money(value)} · ${(value/total*100).toFixed(1)}%</strong></div>`).join('')}
+$('chartPeriod').onchange=renderExpenseChart;
+
+$('taskDate').value=today();$('moneyDate').value=today();$('studyDate').value=today();renderTasks();renderMoney();renderStudy();
+</script>
+</body>
+</html>
